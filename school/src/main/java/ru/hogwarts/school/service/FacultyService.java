@@ -2,52 +2,56 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EmptyColorException;
+import ru.hogwarts.school.exception.EmptyDatabaseException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class FacultyService {
 
-    private Long id = 0L;
-    private final Map<Long, Faculty> facultyMap = new HashMap<>();
+    private final FacultyRepository facultyRepository;
+
+    public FacultyService(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
+    }
 
     public Faculty createFaculty(Faculty faculty) {
-        faculty.setId(++id);
-
-        facultyMap.put(faculty.getId(), faculty);
-
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
     public Faculty readFaculty(Long id) {
-        if (!facultyMap.containsKey(id)) {
+        if (!facultyRepository.existsById(id)) {
             throw new WrongIndexException();
         }
 
-        return facultyMap.get(id);
+        return facultyRepository.findById(id).get();
+    }
+
+    public Collection<Faculty> readAllFaculties() {
+        if (facultyRepository.count() == 0) {
+            throw new EmptyDatabaseException();
+        }
+
+        return facultyRepository.findAll();
     }
 
     public Faculty updateFaculty(Faculty faculty) {
-        if (!facultyMap.containsKey(faculty.getId())) {
+        if (!facultyRepository.existsById(faculty.getId())) {
             throw new WrongIndexException();
         }
 
-        facultyMap.put(faculty.getId(), faculty);
-
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
-    public Faculty deleteFaculty(Long id) {
-        if (!facultyMap.containsKey(id)) {
+    public void deleteFaculty(Long id) {
+        if (!facultyRepository.existsById(id)) {
             throw new WrongIndexException();
         }
 
-        return facultyMap.remove(id);
+        facultyRepository.deleteById(id);
     }
 
     public Collection<Faculty> filterFacultiesByColor(String color) {
@@ -55,8 +59,6 @@ public class FacultyService {
             throw new EmptyColorException();
         }
 
-        return facultyMap.values().stream()
-                .filter(e -> e.getColor().equals(color))
-                .collect(Collectors.toSet());
+        return facultyRepository.findByColor(color);
     }
 }
