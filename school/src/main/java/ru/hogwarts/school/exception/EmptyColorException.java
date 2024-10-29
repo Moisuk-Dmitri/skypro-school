@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class EmptyColorException extends RuntimeException {
 
     public EmptyColorException() {
-        System.out.println("Empty color");
+        super("No provided color");
     }
 
-    public EmptyColorException(String e) {
-        System.out.println(e);
+    public EmptyColorException(String message) {
+        super(message);
     }
 }

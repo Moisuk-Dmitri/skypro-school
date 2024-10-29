@@ -1,52 +1,57 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exception.NoStudentsException;
 import ru.hogwarts.school.exception.WrongAgeException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
 
-    private Long id = 0L;
-    private final Map<Long, Student> studentMap = new HashMap<>();
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     public Student createStudent(Student student) {
-        student.setId(++id);
-        studentMap.put(student.getId(), student);
-
-        return student;
+        return studentRepository.save(student);
     }
 
     public Student readStudent(Long id) {
-        if (!studentMap.containsKey(id)) {
+        if (!studentRepository.existsById(id)) {
             throw new WrongIndexException();
         }
 
-        return studentMap.get(id);
+        return studentRepository.findById(id).get();
+    }
+
+    public Collection<Student> readAllStudents() {
+        if (studentRepository.count() == 0) {
+            throw new NoStudentsException();
+        }
+
+        return studentRepository.findAll();
     }
 
     public Student updateStudent(Student student) {
-        if (!studentMap.containsKey(student.getId())) {
+        if (!studentRepository.existsById(student.getId())) {
             throw new WrongIndexException();
         }
 
-        studentMap.put(student.getId(), student);
-
-        return student;
+        return studentRepository.save(student);
     }
 
-    public Student deleteStudent(Long id) {
-        if (!studentMap.containsKey(id)) {
+    public void deleteStudent(Long id) {
+        if (!studentRepository.existsById(id)) {
             throw new WrongIndexException();
         }
 
-        return studentMap.remove(id);
+        studentRepository.deleteById(id);
     }
 
     public Collection<Student> filterStudentsByAge(int age) {
@@ -54,8 +59,6 @@ public class StudentService {
             throw new WrongAgeException();
         }
 
-        return studentMap.values().stream()
-                .filter(e -> e.getAge() == age)
-                .collect(Collectors.toSet());
+        return studentRepository.findByAge(age);
     }
 }

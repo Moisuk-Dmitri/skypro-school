@@ -4,13 +4,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class WrongIndexException extends RuntimeException {
+public class NoStudentsException extends RuntimeException {
 
-    public WrongIndexException() {
-        super("Wrong index");
+    public NoStudentsException() {
+        super("No provided students");
     }
 
-    public WrongIndexException(String message) {
+    public NoStudentsException(String message) {
         super(message);
     }
 }

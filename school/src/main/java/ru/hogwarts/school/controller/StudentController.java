@@ -27,14 +27,19 @@ public class StudentController {
         return studentService.readStudent(id);
     }
 
+    @GetMapping
+    public Collection<Student> readAllStudents() {
+        return studentService.readAllStudents();
+    }
+
     @PutMapping
     public Student updateStudent(@RequestBody Student student) {
         return studentService.updateStudent(student);
     }
 
     @DeleteMapping("{id}")
-    public Student deleteStudent(@PathVariable Long id) {
-        return studentService.deleteStudent(id);
+    public void deleteStudent(@PathVariable Long id) {
+        studentService.deleteStudent(id);
     }
 
     @GetMapping("filter-by-age/{age}")
