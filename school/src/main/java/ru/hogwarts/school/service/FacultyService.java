@@ -2,7 +2,8 @@ package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.EmptyColorException;
-import ru.hogwarts.school.exception.EmptyDatabaseException;
+import ru.hogwarts.school.exception.NoFacultiesException;
+import ru.hogwarts.school.exception.NoStudentsException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -32,7 +33,7 @@ public class FacultyService {
 
     public Collection<Faculty> readAllFaculties() {
         if (facultyRepository.count() == 0) {
-            throw new EmptyDatabaseException();
+            throw new NoFacultiesException();
         }
 
         return facultyRepository.findAll();

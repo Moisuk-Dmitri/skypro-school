@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class WrongAgeException extends RuntimeException {
 
     public WrongAgeException() {
-        System.out.println("Wrong age");
+        super("Wrong age");
     }
 
-    public WrongAgeException(String e) {
-        System.out.println(e);
+    public WrongAgeException(String message) {
+        super(message);
     }
 }

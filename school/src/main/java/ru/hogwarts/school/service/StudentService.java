@@ -1,7 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exception.EmptyDatabaseException;
+import ru.hogwarts.school.exception.NoStudentsException;
 import ru.hogwarts.school.exception.WrongAgeException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Student;
@@ -32,7 +32,7 @@ public class StudentService {
 
     public Collection<Student> readAllStudents() {
         if (studentRepository.count() == 0) {
-            throw new EmptyDatabaseException();
+            throw new NoStudentsException();
         }
 
         return studentRepository.findAll();
