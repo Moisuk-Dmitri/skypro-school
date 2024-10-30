@@ -6,6 +6,7 @@ import ru.hogwarts.school.exception.NoFacultiesException;
 import ru.hogwarts.school.exception.NoStudentsException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.Collection;
@@ -56,10 +57,21 @@ public class FacultyService {
     }
 
     public Collection<Faculty> filterFacultiesByColor(String color) {
-        if (color.isEmpty()) {
-            throw new EmptyColorException();
+        return facultyRepository.findByColorIgnoreCase(color);
+    }
+
+    public Collection<Faculty> filterFacultiesByName(String name) {
+        return facultyRepository.findByNameIgnoreCase(name);
+    }
+
+    public Collection<Student> getStudentsByFacultyId(Long id) {
+        Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new NoFacultiesException());
+
+        Collection<Student> students = faculty.getStudents();
+        if(students.isEmpty()) {
+            throw new NoStudentsException();
         }
 
-        return facultyRepository.findByColor(color);
+        return students;
     }
 }
