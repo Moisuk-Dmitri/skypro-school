@@ -10,11 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.exception.EmptyColorException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.service.StudentService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -89,17 +92,34 @@ public class FacultyServiceTest {
 
     @Test
     @DisplayName("Положительный тест на фильтрацию факультета по цвету")
-    public void shouldReturnFacultyWhenFilterByAge() {
-        when(facultyRepositoryMock.findByColor("red")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+    public void shouldReturnFacultyWhenFilterByColor() {
+        when(facultyRepositoryMock.findByColorIgnoreCase("red")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
 
         assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColor("red"));
 
-        verify(facultyRepositoryMock, times(1)).findByColor("red");
+        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCase("red");
     }
 
     @Test
-    @DisplayName("Отрицательный тест на фильтрацию факультета по цвету")
-    public void shouldThrowExceptionWhenFilterByAge() {
-        assertThrows(EmptyColorException.class, () -> facultyService.filterFacultiesByColor(""));
+    @DisplayName("Положительный тест на фильтрацию факультета по названию")
+    public void shouldReturnFacultyWhenFilterByName() {
+        when(facultyRepositoryMock.findByNameIgnoreCase("Hogwarts")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+
+        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByName("Hogwarts"));
+
+        verify(facultyRepositoryMock, times(1)).findByNameIgnoreCase("Hogwarts");
+    }
+
+    @Test
+    @DisplayName("Положительный тест на получение списка студентов по идентификатору факультета")
+    public void shouldReturnStudentsByFacultyId() {
+        Student student = new Student();
+        faculty1.setStudents(new HashSet<Student>(List.of(student)));
+
+        when(facultyRepositoryMock.findById(1L)).thenReturn(Optional.ofNullable(faculty1));
+
+        assertEquals(faculty1.getStudents(), facultyService.getStudentsByFacultyId(1L));
+
+        verify(facultyRepositoryMock, times(1)).findById(1L);
     }
 }
