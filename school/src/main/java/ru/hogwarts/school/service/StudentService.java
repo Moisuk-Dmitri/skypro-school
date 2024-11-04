@@ -1,9 +1,8 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exception.NoStudentsException;
-import ru.hogwarts.school.exception.WrongAgeException;
-import ru.hogwarts.school.exception.WrongIndexException;
+import ru.hogwarts.school.exception.*;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -23,11 +22,7 @@ public class StudentService {
     }
 
     public Student readStudent(Long id) {
-        if (!studentRepository.existsById(id)) {
-            throw new WrongIndexException();
-        }
-
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
     public Collection<Student> readAllStudents() {
@@ -55,10 +50,25 @@ public class StudentService {
     }
 
     public Collection<Student> filterStudentsByAge(int age) {
-        if (age <= 0) {
-            throw new WrongAgeException();
+        return studentRepository.findByAge(age);
+    }
+
+    public Collection<Student> filterByAgeBetween(int min, int max) {
+        if (min > max) {
+            throw new AgeMinAboveMaxException();
         }
 
-        return studentRepository.findByAge(age);
+        return studentRepository.findByAgeBetween(min, max);
+    }
+
+    public Faculty getFacultyByStudentId(Long id) {
+        Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
+
+        Faculty faculty = student.getFaculty();
+        if(faculty == null) {
+            throw new NoFacultiesException();
+        }
+
+        return faculty;
     }
 }

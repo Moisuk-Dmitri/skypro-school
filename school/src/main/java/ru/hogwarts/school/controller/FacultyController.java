@@ -1,9 +1,10 @@
 package ru.hogwarts.school.controller;
 
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
@@ -19,8 +20,8 @@ public class FacultyController {
     }
 
     @PostMapping
-    public Faculty createFaculty(@RequestBody Faculty faculty) {
-        return facultyService.createFaculty(faculty);
+    public ResponseEntity<Faculty> createFaculty(@Valid @RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.createFaculty(faculty));
     }
 
     @GetMapping("{id}")
@@ -34,8 +35,8 @@ public class FacultyController {
     }
 
     @PutMapping
-    public Faculty updateFaculty(@RequestBody Faculty faculty) {
-        return facultyService.updateFaculty(faculty);
+    public ResponseEntity<Faculty> updateFaculty(@Valid @RequestBody Faculty faculty) {
+        return ResponseEntity.ok(facultyService.updateFaculty(faculty));
     }
 
     @DeleteMapping("{id}")
@@ -43,8 +44,14 @@ public class FacultyController {
         facultyService.deleteFaculty(id);
     }
 
-    @GetMapping("filter-by-color/{color}")
-    public Collection<Faculty> filterFacultiesByColor(@PathVariable String color) {
-        return facultyService.filterFacultiesByColor(color);
+    @GetMapping("filter")
+    public Collection<Faculty> filterFacultiesByNameOrColor(@RequestParam(required = false) String color,
+                                                            @RequestParam(required = false) String name) {
+        return facultyService.filterFacultiesByColorOrName(color, name);
+    }
+
+    @GetMapping("get/students/{id}")
+    public Collection<Student> getStudentsByFacultyId(@RequestParam Long id) {
+        return facultyService.getStudentsByFacultyId(id);
     }
 }

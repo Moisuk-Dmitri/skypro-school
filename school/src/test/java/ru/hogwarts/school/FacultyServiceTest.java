@@ -7,14 +7,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.hogwarts.school.exception.EmptyColorException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -48,11 +49,7 @@ public class FacultyServiceTest {
     @Test
     @DisplayName("Отрицательный тест на получение факультета")
     public void shouldThrowExceptionWhenRead() {
-        when(facultyRepositoryMock.existsById(1L)).thenThrow(WrongIndexException.class);
-
         assertThrows(WrongIndexException.class, () -> facultyService.readFaculty(1L));
-
-        verify(facultyRepositoryMock, times(1)).existsById(1L);
     }
 
     @Test
@@ -89,17 +86,34 @@ public class FacultyServiceTest {
 
     @Test
     @DisplayName("Положительный тест на фильтрацию факультета по цвету")
-    public void shouldReturnFacultyWhenFilterByAge() {
-        when(facultyRepositoryMock.findByColor("red")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+    public void shouldReturnFacultyWhenFilterByColor() {
+        when(facultyRepositoryMock.findByColorIgnoreCaseOrNameIgnoreCase("red", "")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
 
-        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColor("red"));
+        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColorOrName("red", ""));
 
-        verify(facultyRepositoryMock, times(1)).findByColor("red");
+        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCaseOrNameIgnoreCase("red", "");
     }
 
     @Test
-    @DisplayName("Отрицательный тест на фильтрацию факультета по цвету")
-    public void shouldThrowExceptionWhenFilterByAge() {
-        assertThrows(EmptyColorException.class, () -> facultyService.filterFacultiesByColor(""));
+    @DisplayName("Положительный тест на фильтрацию факультета по названию")
+    public void shouldReturnFacultyWhenFilterByName() {
+        when(facultyRepositoryMock.findByColorIgnoreCaseOrNameIgnoreCase("", "Hogwarts")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+
+        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColorOrName("", "Hogwarts"));
+
+        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCaseOrNameIgnoreCase("", "Hogwarts");
+    }
+
+    @Test
+    @DisplayName("Положительный тест на получение списка студентов по идентификатору факультета")
+    public void shouldReturnStudentsByFacultyId() {
+        Student student = new Student();
+        faculty1.setStudents(new HashSet<Student>(List.of(student)));
+
+        when(facultyRepositoryMock.findById(1L)).thenReturn(Optional.ofNullable(faculty1));
+
+        assertEquals(faculty1.getStudents(), facultyService.getStudentsByFacultyId(1L));
+
+        verify(facultyRepositoryMock, times(1)).findById(1L);
     }
 }

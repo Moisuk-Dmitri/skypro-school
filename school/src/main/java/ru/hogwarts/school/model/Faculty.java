@@ -1,10 +1,11 @@
 package ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 public class Faculty {
@@ -12,10 +13,18 @@ public class Faculty {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank(message = "name must not be blank")
     private String name;
+    @NotBlank(message = "color must not be blank")
     private String color;
 
-    public Faculty() {}
+    @JsonIgnore
+    @OneToMany(mappedBy = "faculty")
+    private Set<Student> students;
+
+    public Faculty() {
+    }
 
     public Faculty(Long id, String name, String color) {
         this.name = name;
@@ -44,6 +53,14 @@ public class Faculty {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public Set<Student> getStudents() {
+        return students;
+    }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
     }
 
     @Override

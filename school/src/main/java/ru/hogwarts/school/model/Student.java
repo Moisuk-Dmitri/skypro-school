@@ -1,8 +1,9 @@
 package ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Objects;
 
@@ -12,8 +13,16 @@ public class Student {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank(message = "name must not be blank")
     private String name;
+    @PositiveOrZero(message = "age must not be less 0")
     private int age;
+
+    @ManyToOne()
+    @JoinColumn(name = "faculty_id")
+    @JsonIgnore
+    private Faculty faculty;
 
     public Student() {}
 
@@ -44,6 +53,14 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Faculty getFaculty() {
+        return faculty;
+    }
+
+    public void setFaculty(Faculty faculty) {
+        this.faculty = faculty;
     }
 
     @Override

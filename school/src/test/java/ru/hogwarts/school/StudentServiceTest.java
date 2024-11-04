@@ -7,13 +7,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.hogwarts.school.exception.WrongAgeException;
+import ru.hogwarts.school.exception.AgeMinAboveMaxException;
 import ru.hogwarts.school.exception.WrongIndexException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
-import javax.swing.text.html.Option;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -50,11 +50,7 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Отрицательный тест на получение студента")
     public void shouldThrowExceptionWhenRead() {
-        when(studentRepositoryMock.existsById(1L)).thenThrow(WrongIndexException.class);
-
         assertThrows(WrongIndexException.class, () -> studentService.readStudent(1L));
-
-        verify(studentRepositoryMock, times(1)).existsById(1L);
     }
 
     @Test
@@ -100,9 +96,31 @@ public class StudentServiceTest {
     }
 
     @Test
-    @DisplayName("Отрицательный тест на фильтрацию студента по возрасту")
-    public void shouldThrowExceptionWhenFilterByAge() {
-        assertThrows(WrongAgeException.class, () -> studentService.filterStudentsByAge(0));
+    @DisplayName("Положительный тест на фильтрацию студента по интервалу возраста")
+    public void shouldReturnStudentsWhenFilterByAgeBetween() {
+        when(studentRepositoryMock.findByAgeBetween(20,25)).thenReturn(new HashSet<Student>(List.of(student1)));
+
+        assertEquals(new HashSet<Student>(List.of(student1)), studentService.filterByAgeBetween(20,25));
+
+        verify(studentRepositoryMock, times(1)).findByAgeBetween(20,25);
     }
 
+    @Test
+    @DisplayName("Отрицательный тест на фильтрацию студента по интервалу возраста при минимальном возрасте больше максимального")
+    public void shouldThrowExceptionStudentWhenFilterByAgeBetweenWhenMinAgeAboveMax() {
+        assertThrows(AgeMinAboveMaxException.class, () -> studentService.filterByAgeBetween(30,25));
+    }
+
+    @Test
+    @DisplayName("Положительный тест на получение факультета по идентификатору студента")
+    public void shouldReturnFacultyByStudentId() {
+        Faculty faculty = new Faculty();
+        student1.setFaculty(faculty);
+
+        when(studentRepositoryMock.findById(1L)).thenReturn(Optional.ofNullable(student1));
+
+        assertEquals(student1.getFaculty(), studentService.getFacultyByStudentId(1L));
+
+        verify(studentRepositoryMock, times(1)).findById(1L);
+    }
 }
