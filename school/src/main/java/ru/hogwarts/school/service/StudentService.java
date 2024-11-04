@@ -7,7 +7,6 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
-import java.util.Optional;
 
 @Service
 public class StudentService {
@@ -23,11 +22,7 @@ public class StudentService {
     }
 
     public Student readStudent(Long id) {
-        if (!studentRepository.existsById(id)) {
-            throw new WrongIndexException();
-        }
-
-        return studentRepository.findById(id).get();
+        return studentRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
     public Collection<Student> readAllStudents() {
@@ -55,17 +50,10 @@ public class StudentService {
     }
 
     public Collection<Student> filterStudentsByAge(int age) {
-        if (age <= 0) {
-            throw new WrongAgeException();
-        }
-
         return studentRepository.findByAge(age);
     }
 
     public Collection<Student> filterByAgeBetween(int min, int max) {
-        if (min < 0 || max < 0) {
-            throw new WrongAgeException();
-        }
         if (min > max) {
             throw new AgeMinAboveMaxException();
         }
@@ -74,7 +62,7 @@ public class StudentService {
     }
 
     public Faculty getFacultyByStudentId(Long id) {
-        Student student = studentRepository.findById(id).orElseThrow(() -> new NoStudentsException());
+        Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
 
         Faculty faculty = student.getFaculty();
         if(faculty == null) {

@@ -2,6 +2,8 @@ package ru.hogwarts.school.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PositiveOrZero;
 
 import java.util.Objects;
 
@@ -11,7 +13,10 @@ public class Student {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank(message = "name must not be blank")
     private String name;
+    @PositiveOrZero(message = "age must not be less 0")
     private int age;
 
     @ManyToOne()

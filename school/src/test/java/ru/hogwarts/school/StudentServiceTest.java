@@ -8,15 +8,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.exception.AgeMinAboveMaxException;
-import ru.hogwarts.school.exception.NoStudentsException;
-import ru.hogwarts.school.exception.WrongAgeException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 
-import javax.swing.text.html.Option;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -53,11 +50,7 @@ public class StudentServiceTest {
     @Test
     @DisplayName("Отрицательный тест на получение студента")
     public void shouldThrowExceptionWhenRead() {
-        when(studentRepositoryMock.existsById(1L)).thenThrow(WrongIndexException.class);
-
         assertThrows(WrongIndexException.class, () -> studentService.readStudent(1L));
-
-        verify(studentRepositoryMock, times(1)).existsById(1L);
     }
 
     @Test
@@ -103,12 +96,6 @@ public class StudentServiceTest {
     }
 
     @Test
-    @DisplayName("Отрицательный тест на фильтрацию студента по возрасту")
-    public void shouldThrowExceptionWhenFilterByAge() {
-        assertThrows(WrongAgeException.class, () -> studentService.filterStudentsByAge(0));
-    }
-
-    @Test
     @DisplayName("Положительный тест на фильтрацию студента по интервалу возраста")
     public void shouldReturnStudentsWhenFilterByAgeBetween() {
         when(studentRepositoryMock.findByAgeBetween(20,25)).thenReturn(new HashSet<Student>(List.of(student1)));
@@ -116,12 +103,6 @@ public class StudentServiceTest {
         assertEquals(new HashSet<Student>(List.of(student1)), studentService.filterByAgeBetween(20,25));
 
         verify(studentRepositoryMock, times(1)).findByAgeBetween(20,25);
-    }
-
-    @Test
-    @DisplayName("Отрицательный тест на фильтрацию студента по интервалу возраста при возрасте меньше 0")
-    public void shouldThrowExceptionStudentWhenFilterByAgeBetweenWhenAgeUnderZero() {
-        assertThrows(WrongAgeException.class, () -> studentService.filterByAgeBetween(-1,25));
     }
 
     @Test

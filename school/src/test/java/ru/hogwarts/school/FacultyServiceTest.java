@@ -7,13 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ru.hogwarts.school.exception.EmptyColorException;
 import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.service.FacultyService;
-import ru.hogwarts.school.service.StudentService;
 
 import java.util.HashSet;
 import java.util.List;
@@ -51,11 +49,7 @@ public class FacultyServiceTest {
     @Test
     @DisplayName("Отрицательный тест на получение факультета")
     public void shouldThrowExceptionWhenRead() {
-        when(facultyRepositoryMock.existsById(1L)).thenThrow(WrongIndexException.class);
-
         assertThrows(WrongIndexException.class, () -> facultyService.readFaculty(1L));
-
-        verify(facultyRepositoryMock, times(1)).existsById(1L);
     }
 
     @Test
@@ -93,21 +87,21 @@ public class FacultyServiceTest {
     @Test
     @DisplayName("Положительный тест на фильтрацию факультета по цвету")
     public void shouldReturnFacultyWhenFilterByColor() {
-        when(facultyRepositoryMock.findByColorIgnoreCase("red")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+        when(facultyRepositoryMock.findByColorIgnoreCaseOrNameIgnoreCase("red", "")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
 
-        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColor("red"));
+        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColorOrName("red", ""));
 
-        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCase("red");
+        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCaseOrNameIgnoreCase("red", "");
     }
 
     @Test
     @DisplayName("Положительный тест на фильтрацию факультета по названию")
     public void shouldReturnFacultyWhenFilterByName() {
-        when(facultyRepositoryMock.findByNameIgnoreCase("Hogwarts")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
+        when(facultyRepositoryMock.findByColorIgnoreCaseOrNameIgnoreCase("", "Hogwarts")).thenReturn(new HashSet<Faculty>(List.of(faculty1)));
 
-        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByName("Hogwarts"));
+        assertEquals(new HashSet<Faculty>(List.of(faculty1)), facultyService.filterFacultiesByColorOrName("", "Hogwarts"));
 
-        verify(facultyRepositoryMock, times(1)).findByNameIgnoreCase("Hogwarts");
+        verify(facultyRepositoryMock, times(1)).findByColorIgnoreCaseOrNameIgnoreCase("", "Hogwarts");
     }
 
     @Test

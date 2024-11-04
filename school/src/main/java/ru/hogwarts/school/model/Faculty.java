@@ -1,6 +1,8 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.Objects;
 import java.util.Set;
@@ -11,13 +13,18 @@ public class Faculty {
     @Id
     @GeneratedValue
     private Long id;
+
+    @NotBlank(message = "name must not be blank")
     private String name;
+    @NotBlank(message = "color must not be blank")
     private String color;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "faculty")
     private Set<Student> students;
 
-    public Faculty() {}
+    public Faculty() {
+    }
 
     public Faculty(Long id, String name, String color) {
         this.name = name;

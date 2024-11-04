@@ -1,7 +1,6 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exception.EmptyColorException;
 import ru.hogwarts.school.exception.NoFacultiesException;
 import ru.hogwarts.school.exception.NoStudentsException;
 import ru.hogwarts.school.exception.WrongIndexException;
@@ -25,11 +24,7 @@ public class FacultyService {
     }
 
     public Faculty readFaculty(Long id) {
-        if (!facultyRepository.existsById(id)) {
-            throw new WrongIndexException();
-        }
-
-        return facultyRepository.findById(id).get();
+        return facultyRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
     public Collection<Faculty> readAllFaculties() {
@@ -56,16 +51,13 @@ public class FacultyService {
         facultyRepository.deleteById(id);
     }
 
-    public Collection<Faculty> filterFacultiesByColor(String color) {
-        return facultyRepository.findByColorIgnoreCase(color);
+    public Collection<Faculty> filterFacultiesByColorOrName(String color, String name) {
+        return facultyRepository.findByColorIgnoreCaseOrNameIgnoreCase(color, name);
     }
 
-    public Collection<Faculty> filterFacultiesByName(String name) {
-        return facultyRepository.findByNameIgnoreCase(name);
-    }
 
     public Collection<Student> getStudentsByFacultyId(Long id) {
-        Faculty faculty = facultyRepository.findById(id).orElseThrow(() -> new NoFacultiesException());
+        Faculty faculty = facultyRepository.findById(id).orElseThrow(NoFacultiesException::new);
 
         Collection<Student> students = faculty.getStudents();
         if(students.isEmpty()) {
