@@ -3,16 +3,13 @@ package ru.hogwarts.school.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
-import java.text.CollationElementIterator;
 import java.util.Collection;
 
-@Validated
 @RestController
 @RequestMapping("student")
 public class StudentController {

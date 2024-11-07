@@ -33,7 +33,7 @@ public class FacultyServiceTest {
 
     @BeforeEach
     public void setup() {
-        faculty1 = new Faculty(0L, "Hogwarts", "red");
+        faculty1 = new Faculty("Hogwarts", "red");
     }
 
     @Test

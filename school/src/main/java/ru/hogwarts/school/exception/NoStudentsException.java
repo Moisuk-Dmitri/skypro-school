@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NoStudentsException extends RuntimeException {
 
     public NoStudentsException() {
-        super("No provided students");
     }
 
     public NoStudentsException(String message) {
