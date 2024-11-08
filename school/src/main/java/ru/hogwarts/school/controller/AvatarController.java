@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,18 @@ public class AvatarController {
         avatarService.deleteAvatar(id);
     }
 
-    @PostMapping(value = "/{studentId}/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadAvatar(@PathVariable Long studentId, @RequestParam MultipartFile avatar) {
-        avatarService.uploadAvatar(studentId, avatar);
+    @PostMapping(value = "/upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public void uploadAvatar(@PathVariable Long id, @RequestParam MultipartFile avatar) {
+        avatarService.uploadAvatar(id, avatar);
+    }
+
+    @GetMapping(value = "/avatar-from-db/{id}")
+    public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
+        return avatarService.downloadAvatar(id);
+    }
+
+    @GetMapping(value = "/avatar-from-file/{id}")
+    public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) {
+        avatarService.downloadAvatar(id, response);
     }
 }

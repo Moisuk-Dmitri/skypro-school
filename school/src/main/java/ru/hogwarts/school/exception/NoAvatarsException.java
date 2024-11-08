@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "no avatars provided")
 public class NoAvatarsException extends RuntimeException {
+
     public NoAvatarsException() {
     }
 

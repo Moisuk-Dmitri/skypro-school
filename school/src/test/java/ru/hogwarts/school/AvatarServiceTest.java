@@ -54,4 +54,5 @@ public class AvatarServiceTest {
         avatarService.uploadAvatar(1L, multipartFile);
     }
 
+
 }

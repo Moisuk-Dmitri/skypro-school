@@ -33,7 +33,7 @@ public class Avatar {
     public Avatar() {
     }
 
-    public Avatar(String filePath, Long fileSize, String mediaType, byte[] data, Student student) {
+    public Avatar(String filePath, Long fileSize, String mediaType, byte[] data) {
         this.filePath = filePath;
         this.fileSize = fileSize;
         this.mediaType = mediaType;
@@ -56,7 +56,7 @@ public class Avatar {
         this.filePath = filePath;
     }
 
-    public Long getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 

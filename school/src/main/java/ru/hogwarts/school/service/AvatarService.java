@@ -1,10 +1,14 @@
 package ru.hogwarts.school.service;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.hogwarts.school.controller.AvatarController;
 import ru.hogwarts.school.exception.*;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.model.Student;
@@ -14,8 +18,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -39,12 +42,12 @@ public class AvatarService {
     }
 
     public Avatar readAvatar(Long id) {
-        return avatarRepository.findById(id).orElseThrow(NoAvatarsException::new);
+        return avatarRepository.findByStudentId(id).orElse(new Avatar());
     }
 
     public Collection<Avatar> readAllAvatars() {
         if (avatarRepository.count() == 0) {
-            throw new NoFacultiesException();
+            throw new NoAvatarsException();
         }
 
         return avatarRepository.findAll();
@@ -77,7 +80,6 @@ public class AvatarService {
         } catch (IOException e) {
             throw new FilesOperationStoppedException();
         }
-
         try {
             try (
                     InputStream is = avatarFile.getInputStream();
@@ -90,7 +92,6 @@ public class AvatarService {
         } catch (IOException e) {
             throw new FilesOperationStoppedException();
         }
-
         try {
             Avatar avatar = readAvatar(studentId);
             avatar.setStudent(student);
@@ -106,5 +107,31 @@ public class AvatarService {
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
+    }
+
+    public ResponseEntity<byte[]> downloadAvatar(Long studentId) {
+        Avatar avatar = readAvatar(studentId);
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
+        headers.setContentLength(avatar.getData().length);
+
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
+    }
+
+    public void downloadAvatar(Long id, HttpServletResponse response) {
+        Avatar avatar = readAvatar(id);
+        Path path = Path.of(avatar.getFilePath());
+        try {
+            try (InputStream is = Files.newInputStream(path);
+                 OutputStream os = response.getOutputStream();) {
+                response.setStatus(200);
+                response.setContentType(avatar.getMediaType());
+                response.setContentLength(Math.toIntExact(avatar.getFileSize()));
+                is.transferTo(os);
+            }
+        } catch (IOException e) {
+            throw new FilesOperationStoppedException();
+        }
     }
 }
