@@ -125,6 +125,7 @@ public class AvatarService {
         try {
             try (InputStream is = Files.newInputStream(path);
                  OutputStream os = response.getOutputStream();) {
+                System.out.println("log1");
                 response.setStatus(200);
                 response.setContentType(avatar.getMediaType());
                 response.setContentLength(Math.toIntExact(avatar.getFileSize()));

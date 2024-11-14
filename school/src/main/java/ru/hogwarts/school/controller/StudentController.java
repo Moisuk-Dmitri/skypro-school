@@ -26,8 +26,8 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public Student readStudent(@PathVariable Long id) {
-        return studentService.readStudent(id);
+    public ResponseEntity<Student> readStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.readStudent(id));
     }
 
     @GetMapping
@@ -57,7 +57,7 @@ public class StudentController {
     }
 
     @GetMapping("get/faculty/{id}")
-    public Faculty getFacultyByStudentId(@PathVariable Long id) {
-        return studentService.getFacultyByStudentId(id);
+    public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getFacultyByStudentId(id));
     }
 }

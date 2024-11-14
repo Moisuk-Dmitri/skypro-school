@@ -27,8 +27,8 @@ public class AvatarController {
     }
 
     @GetMapping("{id}")
-    public Avatar readAvatar(@PathVariable Long id) {
-        return avatarService.readAvatar(id);
+    public ResponseEntity<Avatar> readAvatar(@PathVariable Long id) {
+        return ResponseEntity.ok(avatarService.readAvatar(id));
     }
 
     @GetMapping
