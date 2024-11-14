@@ -25,8 +25,8 @@ public class FacultyController {
     }
 
     @GetMapping("{id}")
-    public Faculty readFaculty(@PathVariable Long id) {
-        return facultyService.readFaculty(id);
+    public ResponseEntity<Faculty> readFaculty(@PathVariable Long id) {
+        return ResponseEntity.ok(facultyService.readFaculty(id));
     }
 
     @GetMapping

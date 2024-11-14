@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class NoFacultiesException extends RuntimeException{
 
     public NoFacultiesException() {
-        super("No provided faculties");
     }
 
     public NoFacultiesException(String message) {

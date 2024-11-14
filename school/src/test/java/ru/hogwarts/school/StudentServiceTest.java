@@ -34,7 +34,7 @@ public class StudentServiceTest {
 
     @BeforeEach
     public void setup() {
-        student1 = new Student(0L, "David", 23);
+        student1 = new Student("David", 23);
     }
 
     @Test

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class WrongIndexException extends RuntimeException {
 
     public WrongIndexException() {
-        super("Wrong index");
     }
 
     public WrongIndexException(String message) {

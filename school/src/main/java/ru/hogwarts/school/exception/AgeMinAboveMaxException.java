@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class AgeMinAboveMaxException extends RuntimeException {
 
     public AgeMinAboveMaxException() {
-        super("Min age must be less than max");
     }
 
     public AgeMinAboveMaxException(String message) {

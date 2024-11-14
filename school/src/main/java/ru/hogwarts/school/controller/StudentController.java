@@ -3,16 +3,13 @@ package ru.hogwarts.school.controller;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
-import java.text.CollationElementIterator;
 import java.util.Collection;
 
-@Validated
 @RestController
 @RequestMapping("student")
 public class StudentController {
@@ -29,8 +26,8 @@ public class StudentController {
     }
 
     @GetMapping("{id}")
-    public Student readStudent(@PathVariable Long id) {
-        return studentService.readStudent(id);
+    public ResponseEntity<Student> readStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.readStudent(id));
     }
 
     @GetMapping
@@ -60,7 +57,7 @@ public class StudentController {
     }
 
     @GetMapping("get/faculty/{id}")
-    public Faculty getFacultyByStudentId(@PathVariable Long id) {
-        return studentService.getFacultyByStudentId(id);
+    public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getFacultyByStudentId(id));
     }
 }
