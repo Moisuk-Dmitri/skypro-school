@@ -1,4 +1,4 @@
-package ru.hogwarts.school;
+package ru.hogwarts.school.Service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
