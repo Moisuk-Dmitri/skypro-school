@@ -71,7 +71,7 @@ public class FacultyControllerTestRest {
         facultyRepository.save(faculty);
 
         ResponseEntity<Faculty> response = testRestTemplate.getForEntity(
-                getAddress() + "/" + facultyRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/" + facultyRepository.findAll().get(0).getId().toString(),
                 Faculty.class
         );
 
@@ -160,7 +160,7 @@ public class FacultyControllerTestRest {
         facultyRepository.save(faculty);
 
         ResponseEntity<Faculty> responseDelete = testRestTemplate.exchange(
-                getAddress() + "/" + facultyRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/" + facultyRepository.findAll().get(0).getId().toString(),
                 HttpMethod.DELETE,
                 null,
                 Faculty.class
@@ -194,7 +194,7 @@ public class FacultyControllerTestRest {
 
         assertThat(responseFilter.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseFilter.getBody()).isNotNull();
-        assertThat(responseFilter.getBody().getFirst())
+        assertThat(responseFilter.getBody().get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(faculty1);
@@ -209,7 +209,7 @@ public class FacultyControllerTestRest {
 
         assertThat(responseFilter1.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseFilter1.getBody()).isNotNull();
-        assertThat(responseFilter1.getBody().getFirst())
+        assertThat(responseFilter1.getBody().get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(faculty1);
@@ -224,7 +224,7 @@ public class FacultyControllerTestRest {
 
         assertThat(responseFilter2.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseFilter2.getBody()).isNotNull();
-        assertThat(responseFilter2.getBody().getFirst())
+        assertThat(responseFilter2.getBody().get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(faculty);
@@ -247,7 +247,7 @@ public class FacultyControllerTestRest {
         facultyRepository.save(faculty);
 
         ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.exchange(
-                getAddress() + "/get/students/" + facultyRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Student>>() {
@@ -256,7 +256,7 @@ public class FacultyControllerTestRest {
 
         assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseGetStudents.getBody()).isNotNull();
-        assertThat(responseGetStudents.getBody().getFirst())
+        assertThat(responseGetStudents.getBody().get(0))
                 .isEqualTo(student);
     }
 

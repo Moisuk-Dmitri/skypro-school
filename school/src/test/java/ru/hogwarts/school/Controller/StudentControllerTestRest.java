@@ -70,7 +70,7 @@ public class StudentControllerTestRest {
         studentRepository.save(student);
 
         ResponseEntity<Student> response = testRestTemplate.getForEntity(
-                getAddress() + "/" + studentRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/" + studentRepository.findAll().get(0).getId().toString(),
                 Student.class
         );
 
@@ -159,7 +159,7 @@ public class StudentControllerTestRest {
         studentRepository.save(student);
 
         ResponseEntity<Student> responseDelete = testRestTemplate.exchange(
-                getAddress() + "/" + studentRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/" + studentRepository.findAll().get(0).getId().toString(),
                 HttpMethod.DELETE,
                 null,
                 Student.class
@@ -193,7 +193,7 @@ public class StudentControllerTestRest {
 
         assertThat(responseFilter.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseFilter.getBody()).isNotNull();
-        assertThat(responseFilter.getBody().getFirst())
+        assertThat(responseFilter.getBody().get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(student1);
@@ -224,7 +224,7 @@ public class StudentControllerTestRest {
         assertThat(responseFilter.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseFilter.getBody()).isNotNull();
         assertThat(responseFilter.getBody().size()).isEqualTo(1);
-        assertThat(responseFilter.getBody().getFirst())
+        assertThat(responseFilter.getBody().get(0))
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .isEqualTo(student1);
@@ -246,7 +246,7 @@ public class StudentControllerTestRest {
         studentRepository.save(student);
 
         ResponseEntity<Faculty> responseGetFaculty = testRestTemplate.getForEntity(
-                getAddress() + "/get/faculty/" + studentRepository.findAll().getFirst().getId().toString(),
+                getAddress() + "/get/faculty/" + studentRepository.findAll().get(0).getId().toString(),
                 Faculty.class
         );
 
