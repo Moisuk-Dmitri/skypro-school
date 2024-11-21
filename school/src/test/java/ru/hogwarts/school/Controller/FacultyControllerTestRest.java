@@ -264,29 +264,15 @@ public class FacultyControllerTestRest {
         System.out.println(faculty.getStudents()); // print
         System.out.println(facultyRepository.findById(facultyRepository.findAll().get(0).getId()).orElseThrow().getStudents()); // print
 
-//        ObjectMapper mapper = new ObjectMapper();
-//        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-//        List<Student> students = mapper.readValue(testRestTemplate.exchange(
-//                        getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
-//                        HttpMethod.GET,
-//                        null,
-//                        new ParameterizedTypeReference<List<Student>>() {}),
-//                new TypeReference<List<Student>>() {
-//                });
-
 //        ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.getForEntity(
-//                getAddress() + "/get/students/1",// + facultyRepository.findAll().get(0).getId().toString(),
+//                getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
 //                null,
 //                new ParameterizedTypeReference<List<Student>>() {
 //                }
 //        );
-
-//        List<Student> readValues = new ObjectMapper().readValue(
-//                responseGetStudents.getBody(), new TypeReference<List<Student>>() { }
-//        );
-
+//
 //        System.out.println(responseGetStudents.getBody()); //
-
+//
 //        assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
 //        assertThat(responseGetStudents.getBody()).isNotNull();
 //        assertThat(responseGetStudents.getBody())
