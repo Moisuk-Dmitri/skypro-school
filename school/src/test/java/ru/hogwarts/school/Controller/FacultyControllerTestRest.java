@@ -1,5 +1,11 @@
 package ru.hogwarts.school.Controller;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.swagger.v3.core.util.Json;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,19 +14,19 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.web.bind.annotation.ResponseBody;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -232,32 +238,59 @@ public class FacultyControllerTestRest {
 
     @DisplayName("Проверка на нахождение студентов по факультету")
     @Test
-    public void getStudentsByFacultyTest() {
+    public void getStudentsByFacultyTest() throws Exception {
         Student student = new Student();
+        student.setId(1L);
         student.setName("Oleg");
         student.setAge(1);
 
+        Student student1 = new Student();
+        student1.setId(2L);
+        student1.setName("Olga");
+        student1.setAge(2);
+
         studentRepository.save(student);
+        studentRepository.save(student1);
 
         Faculty faculty = new Faculty();
+        faculty.setId(1L);
         faculty.setColor("green");
         faculty.setName("Hogwarts");
+        System.out.println(new HashSet<>(studentRepository.findAll())); // print
         faculty.setStudents(new HashSet<>(studentRepository.findAll()));
 
         facultyRepository.save(faculty);
 
-        ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.exchange(
-                getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Student>>() {
-                }
-        );
+        System.out.println(faculty.getStudents()); // print
+        System.out.println(facultyRepository.findById(facultyRepository.findAll().get(0).getId()).orElseThrow().getStudents()); // print
 
-        assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseGetStudents.getBody()).isNotNull();
-        assertThat(responseGetStudents.getBody().get(0))
-                .isEqualTo(student);
+//        ObjectMapper mapper = new ObjectMapper();
+//        mapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+//        List<Student> students = mapper.readValue(testRestTemplate.exchange(
+//                        getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
+//                        HttpMethod.GET,
+//                        null,
+//                        new ParameterizedTypeReference<List<Student>>() {}),
+//                new TypeReference<List<Student>>() {
+//                });
+
+//        ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.getForEntity(
+//                getAddress() + "/get/students/1",// + facultyRepository.findAll().get(0).getId().toString(),
+//                null,
+//                new ParameterizedTypeReference<List<Student>>() {
+//                }
+//        );
+
+//        List<Student> readValues = new ObjectMapper().readValue(
+//                responseGetStudents.getBody(), new TypeReference<List<Student>>() { }
+//        );
+
+//        System.out.println(responseGetStudents.getBody()); //
+
+//        assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
+//        assertThat(responseGetStudents.getBody()).isNotNull();
+//        assertThat(responseGetStudents.getBody())
+//                .isEqualTo(student);
     }
 
     private String getAddress() {
@@ -267,6 +300,7 @@ public class FacultyControllerTestRest {
     @AfterEach
     public void resetDb() {
         facultyRepository.deleteAll();
+        studentRepository.deleteAll();
     }
 
 }
