@@ -23,10 +23,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.net.URI;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -240,43 +237,42 @@ public class FacultyControllerTestRest {
     @Test
     public void getStudentsByFacultyTest() throws Exception {
         Student student = new Student();
-        student.setId(1L);
         student.setName("Oleg");
         student.setAge(1);
 
         Student student1 = new Student();
-        student1.setId(2L);
         student1.setName("Olga");
         student1.setAge(2);
+
+        Faculty faculty = new Faculty();
+        faculty.setColor("green");
+        faculty.setName("Hogwarts");
+
+        facultyRepository.save(faculty);
+
+        student.setFaculty(faculty);
+        student1.setFaculty(faculty);
 
         studentRepository.save(student);
         studentRepository.save(student1);
 
-        Faculty faculty = new Faculty();
-        faculty.setId(1L);
-        faculty.setColor("green");
-        faculty.setName("Hogwarts");
-        System.out.println(new HashSet<>(studentRepository.findAll())); // print
         faculty.setStudents(new HashSet<>(studentRepository.findAll()));
 
-        facultyRepository.save(faculty);
+        ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.exchange(
+                getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Student>>() {}
+        );
 
-        System.out.println(faculty.getStudents()); // print
-        System.out.println(facultyRepository.findById(facultyRepository.findAll().get(0).getId()).orElseThrow().getStudents()); // print
-
-//        ResponseEntity<List<Student>> responseGetStudents = testRestTemplate.getForEntity(
-//                getAddress() + "/get/students/" + facultyRepository.findAll().get(0).getId().toString(),
-//                null,
-//                new ParameterizedTypeReference<List<Student>>() {
-//                }
-//        );
-//
-//        System.out.println(responseGetStudents.getBody()); //
-//
-//        assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
-//        assertThat(responseGetStudents.getBody()).isNotNull();
-//        assertThat(responseGetStudents.getBody())
-//                .isEqualTo(student);
+        assertThat(responseGetStudents.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseGetStudents.getBody()).isNotNull();
+        List<Student> students = new ArrayList<>();
+        students.add(student1);
+        students.add(student);
+        assertThat(responseGetStudents.getBody()).usingRecursiveComparison()
+                .ignoringFields("id", "faculty")
+                .isEqualTo(students);
     }
 
     private String getAddress() {
@@ -285,8 +281,8 @@ public class FacultyControllerTestRest {
 
     @AfterEach
     public void resetDb() {
-        facultyRepository.deleteAll();
         studentRepository.deleteAll();
+        facultyRepository.deleteAll();
     }
 
 }
