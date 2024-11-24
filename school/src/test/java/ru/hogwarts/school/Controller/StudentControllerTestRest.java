@@ -256,6 +256,106 @@ public class StudentControllerTestRest {
                 .isEqualTo(faculty);
     }
 
+    @DisplayName("Проверка на подсчет студентов")
+    @Test
+    public void countAllStudents() {
+        Student student = new Student();
+        student.setName("Oleg");
+        student.setAge(1);
+
+        Student student1 = new Student();
+        student1.setName("Olga");
+        student1.setAge(2);
+
+        studentRepository.save(student);
+        studentRepository.save(student1);
+
+        ResponseEntity<Long> response = testRestTemplate.getForEntity(
+                getAddress() + "/count-students",
+                Long.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody())
+                .isEqualTo(2L);
+    }
+
+    @DisplayName("Проверка на подсчет среднего возраста")
+    @Test
+    public void getAverageAge() {
+        Student student = new Student();
+        student.setName("Oleg");
+        student.setAge(1);
+
+        Student student1 = new Student();
+        student1.setName("Olga");
+        student1.setAge(2);
+
+        Double avgAge = (double) (student.getAge() + student1.getAge()) / 2;
+
+        studentRepository.save(student);
+        studentRepository.save(student1);
+
+        ResponseEntity<Double> response = testRestTemplate.getForEntity(
+                getAddress() + "/get-average-age",
+                Double.class
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody())
+                .isEqualTo(avgAge);
+    }
+
+    @DisplayName("Проверка на получение 5 последних студентов")
+    @Test
+    public void findFiveLastStudents() {
+        Student student = new Student();
+        student.setName("Oleg");
+        student.setAge(1);
+
+        Student student1 = new Student();
+        student1.setName("Olga");
+        student1.setAge(2);
+
+        Student student2 = new Student();
+        student2.setName("Vladislav");
+        student2.setAge(3);
+
+        Student student3 = new Student();
+        student3.setName("Dmitry");
+        student3.setAge(4);
+
+        Student student4 = new Student();
+        student4.setName("Maria");
+        student4.setAge(5);
+
+        Student student5 = new Student();
+        student5.setName("Valentina");
+        student5.setAge(6);
+
+        studentRepository.save(student);
+        studentRepository.save(student1);
+        studentRepository.save(student2);
+        studentRepository.save(student3);
+        studentRepository.save(student4);
+        studentRepository.save(student5);
+
+        ResponseEntity<List<Student>> response = testRestTemplate.exchange(
+                getAddress() + "/find-five-last",
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Student>>() {
+                }
+        );
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody()).isNotNull();
+        assertThat(response.getBody())
+                .isEqualTo(List.of(student5, student4, student3, student2, student1));
+    }
+
     private String getAddress() {
         return "http://localhost:" + port + "/student";
     }

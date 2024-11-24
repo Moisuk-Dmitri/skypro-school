@@ -31,8 +31,8 @@ public class StudentController {
     }
 
     @GetMapping
-    public Collection<Student> readAllStudents() {
-        return studentService.readAllStudents();
+    public ResponseEntity<Collection<Student>> readAllStudents() {
+        return ResponseEntity.ok(studentService.readAllStudents());
     }
 
     @PutMapping
@@ -41,8 +41,9 @@ public class StudentController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteStudent(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("filter")
@@ -59,5 +60,20 @@ public class StudentController {
     @GetMapping("get/faculty/{id}")
     public ResponseEntity<Faculty> getFacultyByStudentId(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getFacultyByStudentId(id));
+    }
+
+    @GetMapping("count-students")
+    public ResponseEntity<Long> countAllStudents() {
+        return ResponseEntity.ok(studentService.countAllStudents());
+    }
+
+    @GetMapping("get-average-age")
+    public ResponseEntity<Double> getAverageAge() {
+        return ResponseEntity.ok(studentService.getAverageAge());
+    }
+
+    @GetMapping("find-five-last")
+    public ResponseEntity<Collection<Student>> findFiveLast() {
+        return ResponseEntity.ok(studentService.findFiveLast());
     }
 }

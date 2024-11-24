@@ -195,4 +195,26 @@ public class StudentControllerTestMvc {
                 .andExpect(jsonPath("$.name").value(faculty.getName()))
                 .andExpect(jsonPath("$.color").value(faculty.getColor()));
     }
+
+    @DisplayName("Проверка на подсчет студентов")
+    @Test
+    public void countAllStudents() throws Exception {
+        when(studentRepository.countAllStudents()).thenReturn(1L);
+
+        mockMvc.perform(get("/student/count-students"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value(1L));
+    }
+
+    @DisplayName("Проверка на подсчет среднего возраста")
+    @Test
+    public void getAverageAge() throws Exception {
+        when(studentRepository.getAverageAge()).thenReturn(12.3);
+
+        mockMvc.perform(get("/student/get-average-age"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value(12.3));
+    }
 }

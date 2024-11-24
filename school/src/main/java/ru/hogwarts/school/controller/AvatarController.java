@@ -32,8 +32,8 @@ public class AvatarController {
     }
 
     @GetMapping
-    public Collection<Avatar> readAllAvatars() {
-        return avatarService.readAllAvatars();
+    public ResponseEntity<Collection<Avatar>> readAllAvatars() {
+        return ResponseEntity.ok(avatarService.readAllAvatars());
     }
 
     @PutMapping
@@ -42,8 +42,9 @@ public class AvatarController {
     }
 
     @DeleteMapping("{id}")
-    public void deleteAvatar(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteAvatar(@PathVariable Long id) {
         avatarService.deleteAvatar(id);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping(value = "/upload/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

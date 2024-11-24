@@ -24,6 +24,7 @@ public class Avatar {
 
     @Lob
     @Column(columnDefinition = "oid")
+    @JsonIgnore
     byte[] data;
 
     @JsonIgnore
