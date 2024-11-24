@@ -1,12 +1,8 @@
-package ru.hogwarts.school;
+package ru.hogwarts.school.Service;
 
-import jakarta.servlet.http.HttpServletResponse;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
@@ -68,19 +64,19 @@ public class AvatarServiceTest {
         avatarService.downloadAvatar(anyLong());
     }
 
-//    @DisplayName("Положительный тест на загрузку изображения из локальной папки")
-//    @Test
-//    public void shouldDownloadAvatarFromLocal() {
-//        Avatar avatar = new Avatar();
-//        avatar.setMediaType(MediaType.IMAGE_JPEG_VALUE);
-//        avatar.setData(new byte[0]);
-//        avatar.setFilePath("src/test/image");
-//        avatar.setFileSize(0L);
-//
-//        MockHttpServletResponse response = new MockHttpServletResponse();
-//
-//        when(avatarRepositoryMock.findByStudentId(anyLong())).thenReturn(Optional.of(avatar));
-//
-//        avatarService.downloadAvatar(anyLong(), response);
-//    }
+    @DisplayName("Положительный тест на загрузку изображения из локальной папки")
+    @Test
+    public void shouldDownloadAvatarFromLocal() {
+        Avatar avatar = new Avatar();
+        avatar.setMediaType(MediaType.IMAGE_JPEG_VALUE);
+        avatar.setData(new byte[0]);
+        avatar.setFilePath("src/test/image/Student{id=null, name='Oleg', age=20}.jpg");
+        avatar.setFileSize(0L);
+
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        when(avatarRepositoryMock.findByStudentId(anyLong())).thenReturn(Optional.of(avatar));
+
+        avatarService.downloadAvatar(anyLong(), response);
+    }
 }

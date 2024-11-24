@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 public class Faculty {
@@ -20,7 +19,7 @@ public class Faculty {
     private String color;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "faculty")
+    @OneToMany(mappedBy = "faculty",fetch = FetchType.EAGER)
     private Set<Student> students;
 
     public Faculty() {
@@ -55,11 +54,15 @@ public class Faculty {
         this.color = color;
     }
 
-    public Set<Student> getStudents() {
+    public Collection<Student> getStudents() {
         return students;
     }
 
     public void setStudents(Set<Student> students) {
+        for (Student student : students) {
+            student.setFaculty(this);
+        }
+
         this.students = students;
     }
 

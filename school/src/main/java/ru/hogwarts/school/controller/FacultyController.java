@@ -8,6 +8,8 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("faculty")
@@ -51,7 +53,7 @@ public class FacultyController {
     }
 
     @GetMapping("get/students/{id}")
-    public Collection<Student> getStudentsByFacultyId(@RequestParam Long id) {
+    public Collection<Student> getStudentsByFacultyId(@PathVariable Long id) {
         return facultyService.getStudentsByFacultyId(id);
     }
 }

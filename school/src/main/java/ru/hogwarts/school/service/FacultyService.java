@@ -7,8 +7,12 @@ import ru.hogwarts.school.exception.WrongIndexException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class FacultyService {
@@ -57,10 +61,8 @@ public class FacultyService {
 
 
     public Collection<Student> getStudentsByFacultyId(Long id) {
-        Faculty faculty = facultyRepository.findById(id).orElseThrow(NoFacultiesException::new);
-
-        Collection<Student> students = faculty.getStudents();
-        if(students.isEmpty()) {
+        Collection<Student> students = facultyRepository.findById(id).orElseThrow(NoFacultiesException::new).getStudents();
+        if (students.isEmpty()) {
             throw new NoStudentsException();
         }
 
