@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.exception.AgeMinAboveMaxException;
 import ru.hogwarts.school.exception.WrongIndexException;
@@ -18,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -122,5 +124,38 @@ public class StudentServiceTest {
         assertEquals(student1.getFaculty(), studentService.getFacultyByStudentId(1L));
 
         verify(studentRepositoryMock, times(1)).findById(1L);
+    }
+
+    @Test
+    @DisplayName("Положительный тест на подсчет всех студентов")
+    public void shouldReturnNumberOfStudents() {
+        when(studentRepositoryMock.countAllStudents()).thenReturn(1L);
+
+        assertThat(studentService.countAllStudents())
+                .isEqualTo(1L);
+
+        verify(studentRepositoryMock, times(1)).countAllStudents();
+    }
+
+    @Test
+    @DisplayName("Положительный тест на подсчет среднего возраста")
+    public void shouldReturnAverageAge() {
+        when(studentRepositoryMock.getAverageAge()).thenReturn(12.3);
+
+        assertThat(studentService.getAverageAge())
+                .isEqualTo(12.3);
+
+        verify(studentRepositoryMock, times(1)).getAverageAge();
+    }
+
+    @Test
+    @DisplayName("Положительный тест на получение 5 последних студентов")
+    public void shouldReturnFiveLastStudents() {
+        when(studentRepositoryMock.findFiveLast()).thenReturn(List.of(student1));
+
+        assertThat(studentService.findFiveLast())
+                .isEqualTo(List.of(student1));
+
+        verify(studentRepositoryMock, times(1)).findFiveLast();
     }
 }

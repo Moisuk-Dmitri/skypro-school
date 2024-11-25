@@ -71,4 +71,16 @@ public class StudentService {
 
         return faculty;
     }
+
+    public Long countAllStudents() {
+        return studentRepository.countAllStudents();
+    }
+
+    public Double getAverageAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    public Collection<Student> findFiveLast() {
+        return studentRepository.findFiveLast();
+    }
 }
