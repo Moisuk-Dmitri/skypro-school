@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.*;
 import ru.hogwarts.school.model.Faculty;
@@ -13,20 +15,29 @@ public class StudentService {
 
     private final StudentRepository studentRepository;
 
+    Logger logger = LoggerFactory.getLogger(StudentService.class);
+
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
     public Student createStudent(Student student) {
+        logger.info("Student create method invoked");
+
         return studentRepository.save(student);
     }
 
     public Student readStudent(Long id) {
+        logger.info("Student read method invoked");
+
         return studentRepository.findById(id).orElseThrow(WrongIndexException::new);
     }
 
     public Collection<Student> readAllStudents() {
+        logger.info("Student read all method invoked");
+
         if (studentRepository.count() == 0) {
+            logger.error("Students database is empty");
             throw new NoStudentsException();
         }
 
@@ -34,7 +45,10 @@ public class StudentService {
     }
 
     public Student updateStudent(Student student) {
+        logger.info("Student update method invoked");
+
         if (!studentRepository.existsById(student.getId())) {
+            logger.error("Student count not be found");
             throw new WrongIndexException();
         }
 
@@ -42,7 +56,10 @@ public class StudentService {
     }
 
     public void deleteStudent(Long id) {
+        logger.info("Student delete method invoked");
+
         if (!studentRepository.existsById(id)) {
+            logger.error("Student count not be found");
             throw new WrongIndexException();
         }
 
@@ -50,11 +67,16 @@ public class StudentService {
     }
 
     public Collection<Student> filterStudentsByAge(int age) {
+        logger.info("Student filter by age method invoked");
+
         return studentRepository.findByAge(age);
     }
 
     public Collection<Student> filterByAgeBetween(int min, int max) {
+        logger.info("Student filter by age between method invoked");
+
         if (min > max) {
+            logger.error("Maximum age must be less or equal minimal");
             throw new AgeMinAboveMaxException();
         }
 
@@ -62,10 +84,13 @@ public class StudentService {
     }
 
     public Faculty getFacultyByStudentId(Long id) {
+        logger.info("Student get faculty method invoked");
+
         Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
 
         Faculty faculty = student.getFaculty();
         if(faculty == null) {
+            logger.error("Faculty does not exist");
             throw new NoFacultiesException();
         }
 
@@ -73,14 +98,20 @@ public class StudentService {
     }
 
     public Long countAllStudents() {
+        logger.info("Student count all students method invoked");
+
         return studentRepository.countAllStudents();
     }
 
     public Double getAverageAge() {
+        logger.info("Student get average age method invoked");
+
         return studentRepository.getAverageAge();
     }
 
     public Collection<Student> findFiveLast() {
+        logger.info("Student find five last method invoked");
+
         return studentRepository.findFiveLast();
     }
 }
