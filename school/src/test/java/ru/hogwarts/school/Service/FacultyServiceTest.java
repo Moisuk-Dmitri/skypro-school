@@ -116,4 +116,17 @@ public class FacultyServiceTest {
 
         verify(facultyRepositoryMock, times(1)).findById(1L);
     }
+
+    @Test
+    @DisplayName("Положительный тест на получение самого длинного названия факультета")
+    public void shouldReturnLongestFacultyName() {
+        Faculty faculty2 = new Faculty();
+        faculty2.setName("Hog");
+
+        when(facultyRepositoryMock.findAll()).thenReturn(List.of(faculty1, faculty2));
+
+        assertEquals(facultyService.findLongestFacultyName(), faculty1.getName());
+
+        verify(facultyRepositoryMock, times(1)).findAll();
+    }
 }

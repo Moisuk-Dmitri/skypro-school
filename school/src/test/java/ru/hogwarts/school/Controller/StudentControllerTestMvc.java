@@ -217,4 +217,33 @@ public class StudentControllerTestMvc {
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$").value(12.3));
     }
+
+    @DisplayName("Проверка на получение имен начинающихся на А")
+    @Test
+    public void findStudentsWhoStartWithA() throws Exception {
+        Student student1 = new Student("Vladimir", 123);
+        Student student2 = new Student("Arseniy", 321);
+
+        when(studentRepository.findAll()).thenReturn(List.of(student1, student2));
+
+        mockMvc.perform(get("/student/find-start-with-A"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0]").exists())
+                .andExpect(jsonPath("$[0]").value(student2.getName().toUpperCase()))
+                .andExpect(jsonPath("$[1]").doesNotExist());
+    }
+
+    @DisplayName("Проверка на подсчет среднего возраста V2")
+    @Test
+    public void getAverageAgeV2() throws Exception {
+        Student student1 = new Student("123", 123);
+        Student student2 = new Student("321", 321);
+
+        when(studentRepository.findAll()).thenReturn(List.of(student1, student2));
+
+        mockMvc.perform(get("/student/get-average-age-v2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value((double) (student1.getAge() + student2.getAge()) / 2));
+    }
 }
