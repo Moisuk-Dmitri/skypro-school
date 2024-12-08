@@ -158,4 +158,30 @@ public class StudentServiceTest {
 
         verify(studentRepositoryMock, times(1)).findFiveLast();
     }
+
+    @Test
+    @DisplayName("Положительный тест на получение студента с А студентов")
+    public void shouldReturnStudentWithA() {
+        Student student2 = new Student();
+        student2.setName("Arseniy");
+        when(studentRepositoryMock.findAll()).thenReturn(List.of(student1, student2));
+
+        assertThat(studentService.findStudentsNameStartWithA())
+                .isEqualTo(List.of(student2.getName().toUpperCase()));
+
+        verify(studentRepositoryMock, times(1)).findAll();
+    }
+
+    @Test
+    @DisplayName("Положительный тест на получение среднего возраста V2 студентов")
+    public void shouldReturnAverageAgeV2() {
+        Student student2 = new Student();
+        student2.setAge(20);
+        when(studentRepositoryMock.findAll()).thenReturn(List.of(student1, student2));
+
+        assertThat(studentService.getAverageAgeV2())
+                .isEqualTo((double) (student1.getAge() + student2.getAge()) / 2);
+
+        verify(studentRepositoryMock, times(1)).findAll();
+    }
 }
