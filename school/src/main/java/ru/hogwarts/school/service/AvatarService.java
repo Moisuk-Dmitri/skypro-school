@@ -2,7 +2,12 @@ package ru.hogwarts.school.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.LoggerFactoryFriend;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -32,6 +37,8 @@ public class AvatarService {
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
 
+    Logger logger = LoggerFactory.getLogger(AvatarService.class);
+
     public AvatarService(AvatarRepository avatarRepository, StudentRepository studentRepository, @Value("${path.avatars}") Path path) {
         this.studentRepository = studentRepository;
         this.avatarRepository = avatarRepository;
@@ -39,15 +46,22 @@ public class AvatarService {
     }
 
     public Avatar createAvatar(Avatar avatar) {
+        logger.info("Avatar create method invoked");
+
         return avatarRepository.save(avatar);
     }
 
     public Avatar readAvatar(Long id) {
+        logger.info("Avatar read method invoked");
+
         return avatarRepository.findByStudentId(id).orElse(new Avatar());
     }
 
     public Collection<Avatar> readAllAvatars() {
+        logger.info("Avatar read all method invoked");
+
         if (avatarRepository.count() == 0) {
+            logger.error("Avatar database is empty");
             throw new NoAvatarsException();
         }
 
@@ -55,7 +69,10 @@ public class AvatarService {
     }
 
     public Avatar updateAvatar(Avatar avatar) {
+        logger.info("Avatar update method invoked");
+
         if (!avatarRepository.existsById(avatar.getId())) {
+            logger.error("Avatar cant be found");
             throw new WrongIndexException();
         }
 
@@ -63,7 +80,10 @@ public class AvatarService {
     }
 
     public void deleteAvatar(Long id) {
+        logger.info("Avatar delete method invoked");
+
         if (!avatarRepository.existsById(id)) {
+            logger.error("Avatar cant be found");
             throw new WrongIndexException();
         }
 
@@ -72,6 +92,8 @@ public class AvatarService {
 
 
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) {
+        logger.info("Avatar upload method invoked");
+
         Student student = studentRepository.findById(studentId).orElseThrow(NoStudentsException::new);
         Path filePath = Path.of(String.valueOf(avatarsDir), student + "." + getExtensions(Objects.requireNonNull(avatarFile.getOriginalFilename())));
 
@@ -79,6 +101,7 @@ public class AvatarService {
             Files.createDirectories(filePath.getParent());
             Files.deleteIfExists(filePath);
         } catch (IOException e) {
+            logger.error("Could not create directory");
             throw new FilesOperationStoppedException();
         }
         try {
@@ -91,6 +114,7 @@ public class AvatarService {
                 bis.transferTo(bos);
             }
         } catch (IOException e) {
+            logger.error("Could not create I/O stream");
             throw new FilesOperationStoppedException();
         }
         try {
@@ -102,6 +126,7 @@ public class AvatarService {
             avatar.setData(avatarFile.getBytes());
             avatarRepository.save(avatar);
         } catch (IOException e) {
+            logger.error("Avatar could not be saved");
             throw new FilesOperationStoppedException();
         }
     }
@@ -111,6 +136,8 @@ public class AvatarService {
     }
 
     public ResponseEntity<byte[]> downloadAvatar(Long studentId) {
+        logger.info("Avatar download into database method invoked");
+
         Avatar avatar = readAvatar(studentId);
         HttpHeaders headers = new HttpHeaders();
 
@@ -121,6 +148,8 @@ public class AvatarService {
     }
 
     public void downloadAvatar(Long id, HttpServletResponse response) {
+        logger.info("Avatar download into local binary method invoked");
+
         Avatar avatar = readAvatar(id);
         Path path = Path.of(avatar.getFilePath());
         try {
@@ -132,12 +161,16 @@ public class AvatarService {
                 is.transferTo(os);
             }
         } catch (IOException e) {
+            logger.error("Could not create I/O stream");
             throw new FilesOperationStoppedException();
         }
     }
 
     public Collection<Avatar> readAvatarsByPages(Integer pageNumber, Integer pageSize) {
+        logger.info("Avatar read by pages method invoked");
+
         if (pageNumber <= 0 || pageSize <= 0) {
+            logger.error("Page number or page size cant be less or equal zero");
             throw new PageSettingsUnderZero();
         }
 
