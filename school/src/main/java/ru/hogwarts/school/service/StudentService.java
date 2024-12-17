@@ -9,6 +9,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -90,7 +91,7 @@ public class StudentService {
         Student student = studentRepository.findById(id).orElseThrow(NoStudentsException::new);
 
         Faculty faculty = student.getFaculty();
-        if(faculty == null) {
+        if (faculty == null) {
             logger.error("Faculty does not exist");
             throw new NoFacultiesException();
         }
@@ -132,5 +133,51 @@ public class StudentService {
 
         return studentRepository.findAll().stream()
                 .collect(Collectors.averagingDouble(Student::getAge));
+    }
+
+    public Void printNamesParallel() {
+        logger.info("Student print names parallel method invoked");
+
+        List<Student> studentList = studentRepository.findAll();
+
+        System.out.println(studentList.get(0).getName());
+        System.out.println(studentList.get(1).getName());
+
+        new Thread(() -> {
+            System.out.println(studentList.get(2).getName());
+            System.out.println(studentList.get(3).getName());
+        }).start();
+
+        new Thread(() -> {
+            System.out.println(studentList.get(4).getName());
+            System.out.println(studentList.get(5).getName());
+        }).start();
+
+        return null;
+    }
+
+    public Void printNamesSynchronized() {
+        logger.info("Student print names parallel method invoked");
+
+        List<Student> studentList = studentRepository.findAll();
+
+        printName(studentList, 0);
+        printName(studentList, 1);
+
+        new Thread(() -> {
+            printName(studentList, 2);
+            printName(studentList, 3);
+        }).start();
+
+        new Thread(() -> {
+            printName(studentList, 4);
+            printName(studentList, 5);
+        }).start();
+
+        return null;
+    }
+
+    private synchronized void printName(List<Student> students, Integer id) {
+        System.out.println(students.get(id).getName());
     }
 }
