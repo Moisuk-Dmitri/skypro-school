@@ -9,6 +9,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("student")
@@ -83,7 +84,17 @@ public class StudentController {
     }
 
     @GetMapping("get-average-age-v2")
-    public Double getAverageAgeV2() {
-        return studentService.getAverageAgeV2();
+    public ResponseEntity<Double> getAverageAgeV2() {
+        return ResponseEntity.ok(studentService.getAverageAgeV2());
+    }
+
+    @GetMapping("print-parallel")
+    public ResponseEntity<Void> printNamesParallel() {
+        return ResponseEntity.ok(studentService.printNamesParallel());
+    }
+
+    @GetMapping("print-synchronized")
+    public ResponseEntity<Void> printNamesSynchronized() {
+        return ResponseEntity.ok(studentService.printNamesSynchronized());
     }
 }
