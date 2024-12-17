@@ -9,6 +9,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -113,5 +114,23 @@ public class StudentService {
         logger.info("Student find five last method invoked");
 
         return studentRepository.findFiveLast();
+    }
+
+    public Collection<String> findStudentsNameStartWithA() {
+        logger.info("Student find students name start with A method invoked");
+
+        return studentRepository.findAll().stream()
+                .map(Student::getName)
+                .filter(e -> e.startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .toList();
+    }
+
+    public Double getAverageAgeV2() {
+        logger.info("Student get average age v2 method invoked");
+
+        return studentRepository.findAll().stream()
+                .collect(Collectors.averagingDouble(Student::getAge));
     }
 }

@@ -177,4 +177,21 @@ public class FacultyControllerTestMvc {
                 .andExpect(jsonPath("$[0].name").value(student.getName()))
                 .andExpect(jsonPath("$[0].age").value(student.getAge()));
     }
+
+    @DisplayName("Проверка на нахождение самого длинного названия факультета")
+    @Test
+    public void findLongestFacultyName() throws Exception {
+        Faculty faculty1 = new Faculty();
+        faculty1.setName("Hogwarts");
+
+        Faculty faculty2 = new Faculty();
+        faculty2.setName("Hog");
+
+        when(facultyRepository.findAll()).thenReturn(List.of(faculty1, faculty2));
+
+        mockMvc.perform(get("/faculty/find-longest-name"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$").value(faculty1.getName()));
+    }
 }

@@ -11,10 +11,9 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.sql.Time;
+import java.util.*;
+import java.util.stream.Stream;
 
 @Service
 public class FacultyService {
@@ -89,5 +88,23 @@ public class FacultyService {
         }
 
         return students;
+    }
+
+    public String findLongestFacultyName() {
+        logger.info("Faculty find longest name method invoked");
+
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparingInt(String::length))
+                .get();
+    }
+
+    public Integer getSmthIdk() {
+        logger.info("Faculty getSmthIdk method invoked");
+
+        return Stream.iterate(1, a -> a +1)
+                .limit(1_000_000)
+                .parallel()
+                .reduce(0, Integer::sum);
     }
 }
